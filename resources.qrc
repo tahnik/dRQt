@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/images">
-        <file>close.png</file>
-        <file>minimise.png</file>
-        <file>maximise.png</file>
+        <file>icons/close.png</file>
+        <file>icons/maximise.png</file>
+        <file>icons/minimise.png</file>
     </qresource>
 </RCC>

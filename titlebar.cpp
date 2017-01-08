@@ -5,27 +5,15 @@
 #include <QHoverEvent>
 #include "resizablewindow.h"
 #include <QPropertyAnimation>
+#include <QSystemTrayIcon>
 
 TitleBar::TitleBar(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::TitleBar)
 {
     ui->setupUi(this);
-    ui->closeButton->resize(ui->closeButton->width(), ui->closeButton->width());
-    QImage imageClose(":/images/close.png");
-    ui->closeButton->setIcon(QPixmap::fromImage(imageClose));
-
-    ui->minimiseButton->resize(ui->minimiseButton->width(), ui->minimiseButton->width());
-    QImage imageMinimise(":/images/minimise.png");
-    ui->minimiseButton->setIcon(QPixmap::fromImage(imageMinimise));
-
-    ui->maximiseButton->resize(ui->maximiseButton->width(), ui->maximiseButton->width());
-    QImage imageMaximise(":/images/maximise.png");
-    ui->maximiseButton->setIcon(QPixmap::fromImage(imageMaximise));
-
 
     setAttribute(Qt::WA_Hover);
-    ui->maximiseButton->installEventFilter(this);
 }
 
 TitleBar::~TitleBar()
@@ -35,22 +23,12 @@ TitleBar::~TitleBar()
 
 bool TitleBar::eventFilter(QObject *watched, QEvent *event)
 {
-    switch (event->type()) {
-    case QHoverEvent::HoverMove:
-        if (watched == ui->maximiseButton)
-        {
-            qInfo() << "Heloo Button";
-        }
-        break;
-    default:
-        break;
-    }
     return QWidget::eventFilter(watched, event);
 }
 
 void TitleBar::on_closeButton_clicked()
 {
-    QCoreApplication::exit(0);
+    animateWindowClosing(true);
 }
 
 void TitleBar::on_maximiseButton_clicked()
@@ -69,5 +47,55 @@ void TitleBar::on_maximiseButton_clicked()
 
 void TitleBar::on_minimiseButton_clicked()
 {
+    animateWindowClosing(false);
+}
+
+void TitleBar::animateWindowClosing(bool exit)
+{
+    m_currentWindow = parentWidget()->geometry();
+    m_newWindow = parentWidget()->geometry();
+    m_newWindow.setLeft(m_currentWindow.left() + animationOffset);
+    m_newWindow.setTop(m_currentWindow.top() + animationOffset);
+    m_newWindow.setRight(m_currentWindow.right() - animationOffset);
+    m_newWindow.setBottom(m_currentWindow.bottom() - animationOffset);
+
+    opacityAnimation = new QPropertyAnimation(parentWidget(), "windowOpacity");
+    opacityAnimation->setDuration(150);
+    opacityAnimation->setStartValue(1);
+    opacityAnimation->setEndValue(0);
+    opacityAnimation->start();
+
+    geometryAnimation = new QPropertyAnimation(parentWidget(), "geometry");
+    geometryAnimation->setDuration(150);
+    geometryAnimation->setStartValue(m_currentWindow);
+    geometryAnimation->setEndValue(m_newWindow);
+    geometryAnimation->start();
+
+    if(exit)
+    {
+        connect(geometryAnimation, SIGNAL(finished()), this, SLOT(exitApplication()));
+    }
+    else
+    {
+        connect(opacityAnimation, SIGNAL(finished()), this, SLOT(minimiseParent()));
+        connect(geometryAnimation, SIGNAL(finished()), this, SLOT(restoreParentRect()));
+    }
+}
+
+void TitleBar::exitApplication()
+{
+    QCoreApplication::exit(0);
+}
+
+void TitleBar::minimiseParent()
+{
     parentWidget()->setWindowState(Qt::WindowMinimized);
+    parentWidget()->setWindowOpacity(1);
+    delete opacityAnimation;
+}
+
+void TitleBar::restoreParentRect()
+{
+    parentWidget()->setGeometry(m_currentWindow);
+    delete geometryAnimation;
 }

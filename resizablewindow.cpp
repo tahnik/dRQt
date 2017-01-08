@@ -7,7 +7,7 @@ ResizableWindow::ResizableWindow(QWidget *parent) :
     ui(new Ui::ResizableWindow)
 {
     ui->setupUi(this);
-    setWindowFlags( Qt::FramelessWindowHint );
+    setWindowFlags(Qt::Window|Qt::FramelessWindowHint|Qt::WindowMinMaxButtonsHint);
     setAttribute(Qt::WA_Hover);
 }
 
@@ -89,12 +89,18 @@ void ResizableWindow::mouseMoveEvent(QMouseEvent *event)
     switch (activeBorder) {
     case RIGHT_BORDER:
         difference = (globalMouseXPosition - m_resizeInfo.clickedMousePos.x()) - (m_mainWindowRect.right() - m_resizeInfo.clickedWindowRightPos);
-        m_mainWindowRect.setRight(m_mainWindowRect.right() + difference);
+        if(m_mainWindowRect.right() + difference >= 800)
+        {
+            m_mainWindowRect.setRight(m_mainWindowRect.right() + difference);
+        }
         this->setGeometry(m_mainWindowRect);
         break;
     case BOTTOM_BORDER:
         difference = (globalMouseYPosition - m_resizeInfo.clickedMousePos.y()) - (m_mainWindowRect.bottom() - m_resizeInfo.clickedWindowBottomPos);
-        m_mainWindowRect.setBottom(m_mainWindowRect.bottom() + difference);
+        if(m_mainWindowRect.bottom() + difference >= 600)
+        {
+            m_mainWindowRect.setBottom(m_mainWindowRect.bottom() + difference);
+        }
         this->setGeometry(m_mainWindowRect);
         break;
     default:

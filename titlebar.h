@@ -23,9 +23,17 @@ private slots:
 
     void on_minimiseButton_clicked();
 
+    void minimiseParent();
+
+    void restoreParentRect();
+
+    void exitApplication();
+
 private:
     Ui::TitleBar *ui;
     bool eventFilter(QObject *watched, QEvent *event);
+
+    void animateWindowClosing(bool exit);
 
     enum CURRENT_WINDOW_STATE
     {
@@ -33,7 +41,11 @@ private:
         MINIMIZED,
         MAXIMIZED
     } m_currentWindowState;
-    QPropertyAnimation *animation;
+    QPropertyAnimation *geometryAnimation;
+    QPropertyAnimation *opacityAnimation;
+    QRect m_currentWindow;
+    QRect m_newWindow;
+    int animationOffset = 5;
 };
 
 #endif // TITLEBAR_H
