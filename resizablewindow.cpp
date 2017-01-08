@@ -8,12 +8,7 @@ ResizableWindow::ResizableWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowFlags( Qt::FramelessWindowHint );
-    this->setAttribute(Qt::WA_Hover);
-    QWidget *mockWidget = new QWidget(this);
-    mockWidget->setObjectName(QStringLiteral("MockWidget"));
-    ui->verticalLayout_2->addWidget(mockWidget);
-    ui->verticalLayout_2->setStretch(5,90);
-    mockWidget->show();
+    setAttribute(Qt::WA_Hover);
 }
 
 ResizableWindow::~ResizableWindow()
@@ -42,7 +37,7 @@ bool ResizableWindow::checkMousePosition()
     int validRightBorder = m_resizeInfo.clickedWindowRightPos - m_resizeOffset;
     int validBottomBorder = m_resizeInfo.clickedWindowBottomPos - m_resizeOffset;
 
-    bool rightBorderActive = (currentMouseXPos > validRightBorder) && (currentMouseXPos < m_resizeInfo.clickedWindowRightPos);
+    bool rightBorderActive = (currentMouseXPos > validRightBorder) && (currentMouseXPos < m_resizeInfo.clickedWindowRightPos) && (currentMouseYPos > m_resizeInfo.clickedWindowTopPos + ui->TitlebarWidget->height());
     bool bottomBorderActive = (currentMouseYPos > validBottomBorder) && (currentMouseYPos < m_resizeInfo.clickedWindowBottomPos);
 
     if(rightBorderActive)

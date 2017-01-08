@@ -24,8 +24,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        resizablewindow.cpp
+    resizablewindow.cpp \
+    titlebar.cpp
 
-HEADERS  += resizablewindow.h
+HEADERS  += \
+    resizablewindow.h \
+    titlebar.h
 
-FORMS    += resizablewindow.ui
+FORMS    += \
+    resizablewindow.ui \
+    titlebar.ui
+
+RESOURCES += \
+    resources.qrc
+
+DISTFILES +=
