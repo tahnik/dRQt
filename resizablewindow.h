@@ -54,6 +54,8 @@ private:
         bool m_YResizeActivated = false;
 
         int m_resizeOffset = 5;
+
+        int previousXPos = 0;
 };
 
 #endif // RESIZABLEWINDOW_H

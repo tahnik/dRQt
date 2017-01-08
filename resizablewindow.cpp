@@ -1,6 +1,7 @@
 #include "resizablewindow.h"
 #include "ui_resizablewindow.h"
 #include <QHoverEvent>
+#include <QDebug>
 
 ResizableWindow::ResizableWindow(QWidget *parent) :
     QWidget(parent),
@@ -79,6 +80,7 @@ bool ResizableWindow::event(QEvent *event)
 void ResizableWindow::mouseMoveEvent(QMouseEvent *event)
 {
     m_beingResized = true;
+
     QPoint globalMousePosition = event->globalPos();
 
     int globalMouseXPosition = globalMousePosition.x();
@@ -104,8 +106,39 @@ void ResizableWindow::mouseMoveEvent(QMouseEvent *event)
         this->setGeometry(m_mainWindowRect);
         break;
     default:
+        int xOffset = m_resizeInfo.clickedWindowLeftPos - m_resizeInfo.clickedMousePos.x();
+        int yOffset = m_resizeInfo.clickedWindowTopPos - m_resizeInfo.clickedMousePos.y();
+        int xPos = event->globalX() + xOffset;
+        int yPos = event->globalY() + yOffset;
+        if(this->y() <= 0)
+        {
+            this->setWindowState(Qt::WindowMaximized);
+        }
+        if(this->windowState() == Qt::WindowNoState)
+        {
+            move(xPos, yPos);
+        }
+
+//        if(yPos >= 0)
+//        {
+//            qInfo() << yPos;
+//            move(xPos, yPos);
+//        }
+//        else
+//        {
+//            if(yPos != 0)
+//            {
+//                checkMousePosition();
+//            }
+//            else if(event->globalX() > previousXPos)
+//            {
+//                qInfo() << "YAy";
+//                checkMousePosition();
+//            }
+//        }
         break;
     }
+    previousXPos = event->globalX();
 }
 
 void ResizableWindow::mouseReleaseEvent(QMouseEvent *event)
