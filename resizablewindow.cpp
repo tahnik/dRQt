@@ -2,6 +2,7 @@
 #include "ui_resizablewindow.h"
 #include <QHoverEvent>
 #include <QDebug>
+#include <titlebar.h>
 
 ResizableWindow::ResizableWindow(QWidget *parent) :
     QWidget(parent),
@@ -112,30 +113,24 @@ void ResizableWindow::mouseMoveEvent(QMouseEvent *event)
         int yPos = event->globalY() + yOffset;
         if(this->y() <= 0)
         {
-            this->setWindowState(Qt::WindowMaximized);
+            if(this->windowState() != Qt::WindowMaximized)
+            {
+                setGeometry(m_mainWindowRect);
+                setWindowState(Qt::WindowMaximized);
+            }
         }
         if(this->windowState() == Qt::WindowNoState)
         {
+            qInfo() << xPos;
             move(xPos, yPos);
         }
-
-//        if(yPos >= 0)
-//        {
-//            qInfo() << yPos;
-//            move(xPos, yPos);
-//        }
-//        else
-//        {
-//            if(yPos != 0)
-//            {
-//                checkMousePosition();
-//            }
-//            else if(event->globalX() > previousXPos)
-//            {
-//                qInfo() << "YAy";
-//                checkMousePosition();
-//            }
-//        }
+        else if(windowState() == Qt::WindowMaximized)
+        {
+            if(event->globalY() > m_resizeInfo.clickedMousePos.y() + 10)
+            {
+                setWindowState(Qt::WindowNoState);
+            }
+        }
         break;
     }
     previousXPos = event->globalX();

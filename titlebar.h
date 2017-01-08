@@ -16,6 +16,16 @@ public:
     explicit TitleBar(QWidget *parent = 0);
     ~TitleBar();
 
+
+    enum CURRENT_WINDOW_STATE
+    {
+        NORMAL,
+        MINIMIZED,
+        MAXIMIZED
+    };
+    static CURRENT_WINDOW_STATE m_currentWindowState;
+
+
 private slots:
     void on_closeButton_clicked();
 
@@ -35,12 +45,6 @@ private:
 
     void animateWindowClosing(bool exit);
 
-    enum CURRENT_WINDOW_STATE
-    {
-        NORMAL,
-        MINIMIZED,
-        MAXIMIZED
-    } m_currentWindowState;
     QPropertyAnimation *geometryAnimation;
     QPropertyAnimation *opacityAnimation;
     QRect m_currentWindow;
