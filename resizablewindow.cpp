@@ -111,25 +111,10 @@ void ResizableWindow::mouseMoveEvent(QMouseEvent *event)
         int yOffset = m_resizeInfo.clickedWindowTopPos - m_resizeInfo.clickedMousePos.y();
         int xPos = event->globalX() + xOffset;
         int yPos = event->globalY() + yOffset;
-        if(this->y() <= 0)
-        {
-            if(this->windowState() != Qt::WindowMaximized)
-            {
-                setGeometry(m_mainWindowRect);
-                setWindowState(Qt::WindowMaximized);
-            }
-        }
         if(this->windowState() == Qt::WindowNoState)
         {
             qInfo() << xPos;
             move(xPos, yPos);
-        }
-        else if(windowState() == Qt::WindowMaximized)
-        {
-            if(event->globalY() > m_resizeInfo.clickedMousePos.y() + 10)
-            {
-                setWindowState(Qt::WindowNoState);
-            }
         }
         break;
     }
@@ -138,6 +123,10 @@ void ResizableWindow::mouseMoveEvent(QMouseEvent *event)
 
 void ResizableWindow::mouseReleaseEvent(QMouseEvent *event)
 {
+    if(this->y() <= 0)
+    {
+        move(this->x(), 0);
+    }
     activeBorder = INVALID_BORDER;
     m_beingResized = false;
     QApplication::restoreOverrideCursor();

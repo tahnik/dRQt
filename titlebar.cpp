@@ -33,11 +33,12 @@ void TitleBar::on_closeButton_clicked()
 
 void TitleBar::on_maximiseButton_clicked()
 {
+    qInfo() << parentWidget()->windowState();
     if(parentWidget()->windowState() == Qt::WindowMaximized)
     {
         parentWidget()->setWindowState(Qt::WindowNoState);
     }
-    else
+    else if(parentWidget()->windowState() == Qt::WindowNoState)
     {
         parentWidget()->setWindowState(Qt::WindowMaximized);
     }
