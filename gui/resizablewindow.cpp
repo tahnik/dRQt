@@ -38,9 +38,11 @@ bool ResizableWindow::checkMousePosition()
 
     int validRightBorder = m_resizeInfo.clickedWindowRightPos - m_resizeOffset;
     int validBottomBorder = m_resizeInfo.clickedWindowBottomPos - m_resizeOffset;
+    int validTopBorder = m_resizeInfo.clickedWindowTopPos + ui->TitlebarWidget->height();
 
     bool rightBorderActive = (currentMouseXPos > validRightBorder) && (currentMouseXPos < m_resizeInfo.clickedWindowRightPos) && (currentMouseYPos > m_resizeInfo.clickedWindowTopPos + ui->TitlebarWidget->height());
     bool bottomBorderActive = (currentMouseYPos > validBottomBorder) && (currentMouseYPos < m_resizeInfo.clickedWindowBottomPos);
+    bool topBorderActive = (currentMouseYPos > m_mainWindowRect.y() && currentMouseYPos < validTopBorder);
 
     if(rightBorderActive)
     {
@@ -51,6 +53,10 @@ bool ResizableWindow::checkMousePosition()
     {
         activeBorder = BOTTOM_BORDER;
         QApplication::setOverrideCursor(Qt::SizeVerCursor);
+    }
+    else if(topBorderActive)
+    {
+        activeBorder = TOP_BORDER;
     }
     else
     {
@@ -106,7 +112,7 @@ void ResizableWindow::mouseMoveEvent(QMouseEvent *event)
         }
         this->setGeometry(m_mainWindowRect);
         break;
-    default:
+    case TOP_BORDER:
         int xOffset = m_resizeInfo.clickedWindowLeftPos - m_resizeInfo.clickedMousePos.x();
         int yOffset = m_resizeInfo.clickedWindowTopPos - m_resizeInfo.clickedMousePos.y();
         int xPos = event->globalX() + xOffset;
