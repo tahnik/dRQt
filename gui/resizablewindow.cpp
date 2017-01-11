@@ -113,7 +113,6 @@ void ResizableWindow::mouseMoveEvent(QMouseEvent *event)
         int yPos = event->globalY() + yOffset;
         if(this->windowState() == Qt::WindowNoState)
         {
-            qInfo() << xPos;
             move(xPos, yPos);
         }
         break;
@@ -169,9 +168,15 @@ void ResizableWindow::maximiseWindow()
     if(windowState() == Qt::WindowMaximized)
     {
         setWindowState(Qt::WindowNoState);
+        if(m_minimiseToMaximise)
+        {
+            setGeometry(m_saveBeforeMaximise);
+            m_minimiseToMaximise = false;
+        }
     }
-    else if(windowState() == Qt::WindowNoState)
+    else if(windowState() != Qt::WindowMinimized)
     {
+        m_saveBeforeMaximise = geometry();
         setWindowState(Qt::WindowMaximized);
     }
 }
@@ -183,6 +188,10 @@ void ResizableWindow::exitApplication()
 
 void ResizableWindow::minimiseWindow()
 {
+    if(windowState() == Qt::WindowMaximized)
+    {
+        m_minimiseToMaximise = true;
+    }
     setWindowState(Qt::WindowMinimized);
     setWindowOpacity(1);
 }

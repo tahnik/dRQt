@@ -46,6 +46,8 @@ private:
     } m_resizeInfo;
 
     QRect m_mainWindowRect;
+    QRect m_saveBeforeMaximise;
+    bool m_minimiseToMaximise = false;
 
     typedef enum mainWindowBorders
     {
