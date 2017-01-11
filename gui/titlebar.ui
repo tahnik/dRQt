@@ -64,7 +64,7 @@
 	padding: 3;
 }
 
-QPushButton#closeButton:hover, QPushButton#maximiseButton:hover, QPushButton#minimiseButton:hover {
+QPushButton#closeButton:hover,  QPushButton#minimiseButton:hover {
     border: 0px solid #8f8f91;
 	background-color: #8F92BD;
 }

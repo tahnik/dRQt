@@ -36,6 +36,8 @@ private slots:
 
 private:
     Ui::TitleBar *ui;
+    void mouseMoveEvent(QMouseEvent *event);
+    bool m_gotMaximized = false;
     bool eventFilter(QObject *watched, QEvent *event);
 };
 

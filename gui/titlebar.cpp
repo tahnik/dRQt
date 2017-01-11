@@ -14,6 +14,8 @@ TitleBar::TitleBar(QWidget *parent) :
     ui->setupUi(this);
 
     setAttribute(Qt::WA_Hover);
+
+    ui->maximiseButton->installEventFilter(this);
 }
 
 TitleBar::~TitleBar()
@@ -23,7 +25,24 @@ TitleBar::~TitleBar()
 
 bool TitleBar::eventFilter(QObject *watched, QEvent *event)
 {
+    if(watched == ui->maximiseButton)
+    {
+        switch (event->type()) {
+        case QEvent::HoverEnter:
+            ui->maximiseButton->setStyleSheet("background-color: #8F92BD");
+            break;
+        case QEvent::HoverLeave:
+            ui->maximiseButton->setStyleSheet("background-color: #54566F");
+            break;
+        }
+
+    }
     return QWidget::eventFilter(watched, event);
+}
+
+void TitleBar::mouseMoveEvent(QMouseEvent *event)
+{
+    return QWidget::mouseMoveEvent(event);
 }
 
 void TitleBar::on_closeButton_clicked()
@@ -34,6 +53,7 @@ void TitleBar::on_closeButton_clicked()
 void TitleBar::on_maximiseButton_clicked()
 {
     ((ResizableWindow*)parentWidget())->maximiseWindow();
+    ui->maximiseButton->setStyleSheet("background-color: #54566F");
 }
 
 void TitleBar::on_minimiseButton_clicked()
