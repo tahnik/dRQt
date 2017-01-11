@@ -33,23 +33,10 @@ private slots:
 
     void on_minimiseButton_clicked();
 
-    void minimiseParent();
-
-    void restoreParentRect();
-
-    void exitApplication();
 
 private:
     Ui::TitleBar *ui;
     bool eventFilter(QObject *watched, QEvent *event);
-
-    void animateWindowClosing(bool exit);
-
-    QPropertyAnimation *geometryAnimation;
-    QPropertyAnimation *opacityAnimation;
-    QRect m_currentWindow;
-    QRect m_newWindow;
-    int animationOffset = 5;
 };
 
 #endif // TITLEBAR_H

@@ -131,3 +131,63 @@ void ResizableWindow::mouseReleaseEvent(QMouseEvent *event)
     m_beingResized = false;
     QApplication::restoreOverrideCursor();
 }
+
+void ResizableWindow::animateWindowClosing(bool exit)
+{
+    m_currentWindow = geometry();
+    QRect newWindow = geometry();
+    newWindow.setLeft(m_currentWindow.left() + animationOffset);
+    newWindow.setTop(m_currentWindow.top() + animationOffset);
+    newWindow.setRight(m_currentWindow.right() - animationOffset);
+    newWindow.setBottom(m_currentWindow.bottom() - animationOffset);
+
+    m_opacityAnimation = new QPropertyAnimation(this, "windowOpacity");
+    m_opacityAnimation->setDuration(150);
+    m_opacityAnimation->setStartValue(1);
+    m_opacityAnimation->setEndValue(0);
+    m_opacityAnimation->start();
+
+    m_geometryAnimation = new QPropertyAnimation(this, "geometry");
+    m_geometryAnimation->setDuration(150);
+    m_geometryAnimation->setStartValue(m_currentWindow);
+    m_geometryAnimation->setEndValue(newWindow);
+    m_geometryAnimation->start();
+
+    if(exit)
+    {
+        connect(m_geometryAnimation, SIGNAL(finished()), this, SLOT(exitApplication()));
+    }
+    else
+    {
+        connect(m_opacityAnimation, SIGNAL(finished()), this, SLOT(minimiseWindow()));
+        connect(m_geometryAnimation, SIGNAL(finished()), this, SLOT(restoreWindow()));
+    }
+}
+
+void ResizableWindow::maximiseWindow()
+{
+    if(windowState() == Qt::WindowMaximized)
+    {
+        setWindowState(Qt::WindowNoState);
+    }
+    else if(windowState() == Qt::WindowNoState)
+    {
+        setWindowState(Qt::WindowMaximized);
+    }
+}
+
+void ResizableWindow::exitApplication()
+{
+    QCoreApplication::exit(0);
+}
+
+void ResizableWindow::minimiseWindow()
+{
+    setWindowState(Qt::WindowMinimized);
+    setWindowOpacity(1);
+}
+
+void ResizableWindow::restoreWindow()
+{
+    setGeometry(m_currentWindow);
+}
